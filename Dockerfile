@@ -1,4 +1,3 @@
-
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -9,13 +8,14 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl gcc python3-dev libssl-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    python -m pip install --no-cache-dir --upgrade pip wheel "setuptools>=70.0.0" && \
+    python -m pip install --no-cache-dir --upgrade pip wheel setuptools==84.1.0 && \
     groupadd -r appgroup && \
     useradd -r -g appgroup appuser
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir --upgrade setuptools==84.1.0
+RUN python -m pip install --no-cache-dir -r requirements.txt && \
+    python -m pip install --no-cache-dir --upgrade setuptools==84.1.0 && \
+    python -m pip show setuptools
 
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 

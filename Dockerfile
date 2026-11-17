@@ -15,10 +15,38 @@ RUN apt-get update && \
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip uninstall -y pip setuptools wheel || true
 
-COPY . .
-RUN chown -R appuser:appgroup /app
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libxshmfence1 \
+    libxkbcommon0 \
+    libgtk-3-0 \
+    libdrm2 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libatspi2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /ms-playwright && \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright playwright install chromium && \
+    chown -R appuser:appgroup /ms-playwright
+
+USER appuser
+
+COPY --chown=appuser:appgroup . .
+
+USER appuser
 
 USER appuser
 

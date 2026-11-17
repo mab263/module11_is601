@@ -43,6 +43,13 @@ RUN mkdir -p /ms-playwright && \
     PLAYWRIGHT_BROWSERS_PATH=/ms-playwright playwright install chromium && \
     chown -R appuser:appgroup /ms-playwright
 
+RUN rm -rf \
+    /usr/local/lib/python3.11/site-packages/pip \
+    /usr/local/lib/python3.11/site-packages/pip-*.dist-info \
+    /usr/local/bin/pip \
+    /usr/local/bin/pip3 \
+    /usr/local/bin/pip3.11
+
 USER appuser
 
 COPY --chown=appuser:appgroup . .

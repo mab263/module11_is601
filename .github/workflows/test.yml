@@ -69,6 +69,11 @@ jobs:
             -t "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" \
             .
 
+      - name: Check setuptools version
+        run: |
+          docker run --rm "${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest" \
+            python -c "import setuptools; print('Setuptools version:', setuptools.__version__)"
+
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@0.35.0
         with:

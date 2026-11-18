@@ -1,28 +1,127 @@
-## 📝 Running Tests Locally
-
-To run the tests locally, first install the project dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Make sure your PostgreSQL database is running and your test database environment variables are configured.
-
-Then run the tests using:
-
-```bash
-pytest --cov=. --cov-report=term-missing
-```
-
-This runs the unit, integration, and end-to-end tests and displays the test coverage report.
-
-## 🐳 Docker Hub
-
-The Docker image for this project is available on Docker Hub:
-
-[View Docker Hub Repository](https://hub.docker.com/r/mab263/module10_is601)
-
+# 🔢 Module 11 – Calculation API
 
 ## 🗂️ Project Overview
 
-This project enhances a FastAPI application by implementing a secure user management system using SQLAlchemy and Pydantic. It includes user creation and validation, password hashing and verification, and database integration with PostgreSQL. Unit and integration tests are used to verify functionality, data validation, and database operations. A CI/CD pipeline is configured with GitHub Actions to automatically run tests, build and scan the Docker image, and push the image to Docker Hub when the tests pass.
+This project builds on the previous FastAPI application by introducing a Calculation model that stores and manages arithmetic operations using SQLAlchemy, Pydantic, and PostgreSQL.
+
+The application allows users to submit arithmetic calculations, validates input data, and stores calculation records in the database. It also includes automated testing and a CI/CD pipeline through GitHub Actions.
+
+## 🛠️ Features
+
+- **Calculation Model:** Uses SQLAlchemy to define and manage calculation records.
+- **Pydantic Schemas:** Validates incoming calculation data and structures API responses.
+- **Arithmetic Operations:** Supports addition, subtraction, multiplication, and division.
+- **Input Validation:** Checks calculation inputs and prevents invalid operations, including division by zero.
+- **PostgreSQL Database:** Stores calculation records and supports database integration testing.
+- **Automated Testing:** Includes unit, integration, and end-to-end tests using pytest.
+- **Docker:** Uses Docker and Docker Compose to build and run the application.
+- **CI/CD Pipeline:** GitHub Actions automatically runs tests, builds the Docker image, scans it for vulnerabilities using Trivy, and pushes the image to Docker Hub.
+
+## 💻 Technologies Used
+
+- Python 3.11
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- PostgreSQL
+- Pytest
+- Playwright
+- Docker and Docker Compose
+- GitHub Actions
+- Trivy
+- Docker Hub
+
+## 📝 Calculation Model
+
+The Calculation model represents arithmetic operations stored in the database.
+
+The model includes:
+
+| Field | Description |
+|---|---|
+| `id` | Unique calculation identifier |
+| `a` | First operand |
+| `b` | Second operand |
+| `type` | Type of arithmetic operation |
+| `result` | Result of the calculation |
+| `user_id` | Optional reference to an associated user |
+
+The application validates calculation inputs before processing operations. Division by zero is rejected to prevent invalid calculations.
+
+## ⚙️ Installation and Setup
+
+### Prerequisites
+
+- Python 3.11
+- Docker Desktop
+- Git
+
+### 1. Clone the Repository
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd module11_is601
+```
+
+### 2. Build and Start the Application
+
+Build the Docker containers:
+
+```bash
+docker compose build
+```
+
+Start the application:
+
+```bash
+docker compose up -d
+```
+
+### 3. Run the Tests
+
+Run the test suite inside the application container:
+
+```bash
+docker compose exec web pytest -q --no-cov
+```
+
+To run tests with coverage:
+
+```bash
+docker compose exec web pytest --cov=. --cov-report=term-missing
+```
+
+The project includes unit, integration, and end-to-end tests to verify calculation functionality, database interactions, and application behavior.
+
+## 🐳 Docker Hub
+
+The Docker image is published to Docker Hub:
+
+**Repository:** https://hub.docker.com/r/mab263/module11_is601
+
+Pull the image:
+
+```bash
+docker pull mab263/module11_is601:latest
+```
+
+Run the image:
+
+```bash
+docker run --rm -p 8000:8000 mab263/module11_is601:latest
+```
+
+## GitHub Actions – CI/CD
+
+The project uses GitHub Actions to automate the testing and deployment process.
+
+The workflow includes two main jobs:
+
+1. **Tests:** Runs the unit, integration, and end-to-end tests using a PostgreSQL service.
+2. **Build, Scan, and Push:** Builds the Docker image, scans it for security vulnerabilities using Trivy, and pushes the image to Docker Hub when changes are pushed to the `main` branch.
+
+Docker Hub credentials are stored securely in GitHub repository secrets.
+
+## Reflection
+
+This assignment provided additional experience working with SQLAlchemy models, Pydantic validation, PostgreSQL, and automated testing. It also helped strengthen my understanding of Docker and CI/CD workflows. Troubleshooting issues with dependencies, Docker builds, and GitHub Actions was challenging, but it helped me become more comfortable identifying errors and working through them. Overall, this project helped me better understand how different parts of a backend application work together, from validating user input to storing data and deploying an application.

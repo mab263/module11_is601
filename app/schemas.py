@@ -1,9 +1,18 @@
-"""Pydantic schemas for creating and returning users."""
+"""Pydantic schemas for creating and returning users and calculations."""
 
 from datetime import datetime
+from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    field_validator,
+    model_validator,
+)
 
+from app.calculation_factory import CalculationType
 from app.security import MAX_PASSWORD_BYTES
 
 
@@ -37,4 +46,41 @@ class UserRead(BaseModel):
     id: int
     username: str
     email: EmailStr
+    created_at: datetime
+
+
+class CalculationCreate(BaseModel):
+    """Data a client sends to request a calculation. The result is computed, not supplied."""
+
+    a: float = Field(allow_inf_nan=False)
+    b: float = Field(allow_inf_nan=False)
+    type: CalculationType
+
+    @field_validator("type", mode="before")
+    @classmethod
+    def normalize_type(cls, value):
+        """Accept 'add', 'ADD', or ' Add ' for 'Add'. Anything else fails the enum check."""
+        if isinstance(value, str):
+            return value.strip().capitalize()
+        return value
+
+    @model_validator(mode="after")
+    def reject_zero_divisor(self):
+        """Dividing by zero is rejected up front, before anything reaches the database."""
+        if self.type == CalculationType.DIVIDE and self.b == 0:
+            raise ValueError("Cannot divide by zero")
+        return self
+
+
+class CalculationRead(BaseModel):
+    """A saved calculation as returned to a client."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    a: float
+    b: float
+    type: CalculationType
+    result: float
+    user_id: Optional[int] = None
     created_at: datetime

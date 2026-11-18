@@ -59,7 +59,7 @@ The application validates calculation inputs before processing operations. Divis
 ### 1. Clone the Repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone git@github.com:mab263/module11_is601.git
 cd module11_is601
 ```
 
